@@ -1,0 +1,6 @@
+streamlit
+oss2
+openpyxl
+Pillow
+pillow-avif-plugin
+python-dotenv

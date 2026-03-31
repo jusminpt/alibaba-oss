@@ -5,13 +5,17 @@ from datetime import datetime
 from dotenv import load_dotenv
 from main import run_image_insertion # IMPORT THE LOGIC HERE
 
-# Load keys from .env
-load_dotenv()
+# Load .env only if it exists (local testing)
+if os.path.exists(".env"):
+    load_dotenv()
 
-# Setup Alibaba Auth once
-auth = oss2.Auth(os.getenv('OSS_ACCESS_KEY'), os.getenv('OSS_SECRET_KEY'))
-endpoint = os.getenv('OSS_ENDPOINT')
-bucket_name = os.getenv('OSS_BUCKET')
+# This will fetch from GitHub Secrets (in Docker) OR .env (locally)
+OSS_ACCESS_KEY = os.getenv('OSS_ACCESS_KEY')
+OSS_SECRET_KEY = os.getenv('OSS_SECRET_KEY')
+OSS_ENDPOINT = os.getenv('OSS_ENDPOINT')
+OSS_BUCKET = os.getenv('OSS_BUCKET')
+
+auth = oss2.Auth(OSS_ACCESS_KEY, OSS_SECRET_KEY)
 
 st.title("📦 Excel Inventory Image Inserter")
 st.write("Upload your Excel, and I'll fetch images from Alibaba OSS.")
