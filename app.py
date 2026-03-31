@@ -28,7 +28,7 @@ if uploaded_file:
         with st.spinner("Processing... this may take a minute."):
             try:
                 # Call the function from processor.py
-                final_excel_data = run_image_insertion(uploaded_file, bucket_name, auth, endpoint)
+                final_excel_data = run_image_insertion(uploaded_file, OSS_BUCKET, auth, OSS_ENDPOINT)
                 
                 # Setup dynamic name
                 date_str = datetime.now().strftime("%d-%m-%Y")
