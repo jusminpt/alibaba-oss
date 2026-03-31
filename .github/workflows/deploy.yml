@@ -3,7 +3,6 @@ on:
   push:
     branches: ["main"]
 env:
-  # Values from your screenshots
   ACR_ENDPOINT: oss-excel-prod-registry.ap-southeast-7.cr.aliyuncs.com
   ACR_INSTANCE_ID: cri-ienc7p4u22kqw2ce
   REGION: ap-southeast-7
@@ -26,5 +25,7 @@ jobs:
         run: |
           docker build -t ${{ env.ACR_ENDPOINT }}/${{ env.NAMESPACE }}/${{ env.REPO_NAME }}:latest .
       - name: Push to ACR
-        run: |-
+        run: |
           docker push ${{ env.ACR_ENDPOINT }}/${{ env.NAMESPACE }}/${{ env.REPO_NAME }}:latest
+      - name: Logout from ACR
+        run: docker logout ${{ env.ACR_ENDPOINT }}
