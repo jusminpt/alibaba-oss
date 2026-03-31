@@ -1,4 +1,6 @@
-FROM registry.ap-southeast-7.aliyuncs.com/acs/python:3.12-slim
+# 1. Use a lightweight Python image
+#FROM python:3.9-slim
+FROM public.ecr.aws/docker/library/python:3.12-slim
 
 # 2. Set working directory
 WORKDIR /app
