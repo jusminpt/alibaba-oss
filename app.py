@@ -18,7 +18,7 @@ OSS_BUCKET = os.getenv('OSS_BUCKET')
 auth = oss2.Auth(OSS_ACCESS_KEY, OSS_SECRET_KEY)
 
 st.title("📦 Excel Inventory Image Inserter")
-st.write("Upload your Excel, and I'll fetch images from Alibaba OSS.")
+st.write("Upload your Excel, and I'll fetch images from Alibaba Storage.")
 
 # User uploads the file
 uploaded_file = st.file_uploader("Choose an Excel file", type=['xlsx'])
