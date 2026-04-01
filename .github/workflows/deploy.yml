@@ -22,12 +22,24 @@ jobs:
       - name: Push to ACR
         run: |-
           docker push ${{ env.ACR_ENDPOINT }}/${{ env.NAMESPACE }}/${{ env.REPO_NAME }}:latest
-      - name: Deploy to Server
-        run: |-
-          docker rm -f my-app || true
-          docker run -d -p 80:8501 --name my-app \
-            -e OSS_ACCESS_KEY=${{ secrets.OSS_ACCESS_KEY }} \
-            -e OSS_SECRET_KEY=${{ secrets.OSS_SECRET_KEY }} \
-            -e OSS_BUCKET=${{ secrets.OSS_BUCKET }} \
-            -e OSS_ENDPOINT=${{ secrets.OSS_ENDPOINT }} \
-            ${{ env.ACR_ENDPOINT }}/${{ env.NAMESPACE }}/${{ env.REPO_NAME }}:latest
+      - name: Deploy to ECS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ECS_HOST }} # Your ECS IP
+          username: root # Your ECS Username
+          key: ${{ secrets.ECS_SSH_KEY }} # The Private Key we talked about
+          script: |
+            # 1. Login to ACR INSIDE the ECS server
+            echo "${{ secrets.ACR_REGISTRY_PASSWORD }}" | docker login ${{ env.ACR_ENDPOINT }} --username ${{ secrets.ACR_USERNAME }} --password-stdin
+
+            # 2. THE PULL HAPPENS HERE (on your server)
+            docker pull ${{ env.ACR_ENDPOINT }}/${{ env.NAMESPACE }}/${{ env.REPO_NAME }}:latest
+
+            # 3. Restart the container
+            docker rm -f my-app || true
+            docker run -d -p 80:8501 --name my-app \
+              -e OSS_ACCESS_KEY=${{ secrets.OSS_ACCESS_KEY }} \
+              -e OSS_SECRET_KEY=${{ secrets.OSS_SECRET_KEY }} \
+              -e OSS_BUCKET=${{ secrets.OSS_BUCKET }} \
+              -e OSS_ENDPOINT=${{ secrets.OSS_ENDPOINT }} \
+              ${{ env.ACR_ENDPOINT }}/${{ env.NAMESPACE }}/${{ env.REPO_NAME }}:latest
